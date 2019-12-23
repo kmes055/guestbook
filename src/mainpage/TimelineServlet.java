@@ -3,6 +3,7 @@ package mainpage;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+//import javax.servlet.Servlet;
 import javax.servlet.GenericServlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -12,6 +13,8 @@ import javax.servlet.annotation.WebServlet;
 @WebServlet("/main")
 @SuppressWarnings("serial")
 public class TimelineServlet extends GenericServlet {
+	// TODO
+	// 필요하다면 Servlet interface로 전환
 	
 	@Override
 	public void service(
