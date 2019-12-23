@@ -1,4 +1,4 @@
-# NHN 사전과제
+﻿# NHN 사전과제
 
 **개발환경**
 
@@ -12,7 +12,7 @@
 
 **ROOT Page**
 
-​	URL : http://localhost:8000/
+​	URL : http://localhost:9999/
 
 ​	
 
