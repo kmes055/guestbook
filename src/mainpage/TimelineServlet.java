@@ -41,7 +41,7 @@ public class TimelineServlet extends HttpServlet {
 					"study");	// DBMS 사용자 암호
 			stmt = conn.createStatement();
 			
-			String query = "SELECT FNO, EMAIL, CONTENT FROM FEED ORDER BY MOD_TIME DESC";
+			String query = "SELECT FNO, EMAIL, CONTENT FROM FEED ORDER BY FNO DESC";
 			rs = stmt.executeQuery(query);
 			
 			while (rs.next()) {
@@ -50,7 +50,7 @@ public class TimelineServlet extends HttpServlet {
 				out.println("<br>Email: " + rs.getString("EMAIL"));
 				out.println("<br><div style='width:1000px; height:400px'>");
 				out.println(rs.getString("CONTENT") + "</div>");
-				out.println("<form action='main' method='post'>");
+				out.println("<form action='check?fno=" + rs.getInt("FNO") + " method='post'>");
 				out.println("<input type='submit' value='수정'>");
 				out.println("</form></div>");
 			}
@@ -72,9 +72,9 @@ public class TimelineServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		response.setContentType("text/html; charset=UTF-8");
-		response.sendRedirect("/check");
 
-		
+		PrintWriter out = response.getWriter();
+		out.println("Something is wrong");
 		// TODO 
 		// Set page view by list of feeds
 		// or one object for each feed?

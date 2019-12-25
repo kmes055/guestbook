@@ -40,7 +40,7 @@ public class ModifyServlet extends HttpServlet {
 		Statement stmt = null;
 		
 		// TODO get feed no. from html? other view?
-		int fno = 1;
+		int fno = Integer.parseInt(request.getParameter("fno"));
 		String content = request.getParameter("content");
 		
 		response.setContentType("text/html;charset=UTF-8");
@@ -54,7 +54,10 @@ public class ModifyServlet extends HttpServlet {
 					"study");	// DBMS 사용자 암호
 			stmt = conn.createStatement();
 			
-			// TODO make another table contains modify history
+			// TODO 
+			// 1. make another table contains modify history
+			// 2. Check this line
+			// content.replaceAll(";", "\\;");
 			String query = String.format("UPDATE FEED SET CONTENT=%s, MOD_DATE=NOW() WHERE FNO = %d;", content, fno);
 			stmt.executeUpdate(query);
 			
@@ -63,7 +66,6 @@ public class ModifyServlet extends HttpServlet {
 			throw new ServletException(e);
 			
 		} finally {
-			//try {if (rs != 0) rs.close();} catch(Exception e) {}
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
 			try {if (conn != null) conn.close();} catch(Exception e) {}
 		}
@@ -75,11 +77,6 @@ public class ModifyServlet extends HttpServlet {
 		//////////////////////////////////////////////////////////////////////
 		// 							Debugging part							//
 		//////////////////////////////////////////////////////////////////////
-		
-		// TODO
-		// 1. Get current time
-		// 2. Call module including JDBC to save data into DB table.
-		// 3. (Optional) render page
 		
 		out.println("done");
 	}

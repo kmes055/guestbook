@@ -58,17 +58,17 @@ public class UploadServlet extends HttpServlet {
 					"jdbc:mysql://localhost/studydb", //JDBC URL
 					"study",	// DBMS 사용자 아이디
 					"study");	// DBMS 사용자 암호
-			stmt = conn.prepareStatement("INSERT INTO FEED VALUES (?, ?, ?, NOW(), NOW());");
+			stmt = conn.prepareStatement("INSERT INTO FEED VALUES (NULL, ?, ?, NOW(), NOW(), ?);");
 			stmt.setString(1, mail);
 			stmt.setString(2, passwd);
 			stmt.setString(3, content);
 
-			if (!this.checkEmail(mail)) {
-				// TODO show some error message
-				throw new Exception("Email format is wrong");
-			}
+			/*
+			 * if (!this.checkEmail(mail)) { // TODO show some error message throw new
+			 * Exception("Email format is wrong"); }
+			 */
 			stmt.executeUpdate();
-			
+			response.sendRedirect("/main");
 		} catch (Exception e) {
 			throw new ServletException(e);
 			
@@ -80,18 +80,11 @@ public class UploadServlet extends HttpServlet {
 		//////////////////////////////////////////////////////////////////////
 		// 							Debugging part							//
 		//////////////////////////////////////////////////////////////////////
-		out.println(mail + " " + passwd + " " + content + "<br>You finished echo.<br>");
+		
 		
 		//////////////////////////////////////////////////////////////////////
 		// 							Debugging part							//
 		//////////////////////////////////////////////////////////////////////
-		
-		// TODO
-		// 1. Get current time
-		// 2. Call module including JDBC to save data into DB table.
-		// 3. (Optional) render page
-		
-		out.println("done");
 	}
 
 	private Boolean checkEmail(String mail) {

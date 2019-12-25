@@ -26,7 +26,7 @@ public class CheckPasswordServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.println("<html><head><title>Guest Book</title></head>");
 		out.println("<body><h1>비밀번호를 입력해주세요</h1>");
-		out.println("<form action='main' method='post'>");
+		out.println("<form action='check' method='post'>");
 		out.println("Password: <input type='password' name='passwd' style='width: 100px;'>");
 		out.println("<input type='submit' value='확인'>");
 		out.println("</form></body></html>");
@@ -45,8 +45,7 @@ public class CheckPasswordServlet extends HttpServlet {
 		
 		// TODO
 		// get feed no. from html
-		int fno = 1;
-		
+		int fno = Integer.parseInt(request.getParameter("fno"));
 		String passwd = request.getParameter("passwd");
 		
 		response.setContentType("text/html;charset=UTF-8");
@@ -60,9 +59,7 @@ public class CheckPasswordServlet extends HttpServlet {
 					"study");	// DBMS 사용자 암호
 			stmt = conn.createStatement();
 			
-			String query = "SELECT PWD" + 
-							" FROM FEED" +
-							" WHERE FNO == " + fno;
+			String query = "SELECT PWD FROM FEED WHERE FNO=" + fno;
 			
 			rs = stmt.executeQuery(query);
 			response.setContentType("text/html; charset=UTF-8");
@@ -74,7 +71,7 @@ public class CheckPasswordServlet extends HttpServlet {
 				// TODO show denial message + back btn
 				out.println("<html><head><title>비밀번호 오류</title></head>");
 				out.println("<body><p>비밀번호가 틀렸습니다.</p>");
-				out.println("<form action='back' method='post'>");
+				out.println("<form action='back'>");
 				out.println("<a href='/check'>뒤로가기</a>");
 				out.println("</form></body></html>");
 			}
