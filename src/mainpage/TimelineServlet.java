@@ -45,12 +45,17 @@ public class TimelineServlet extends HttpServlet {
 			rs = stmt.executeQuery(query);
 			
 			while (rs.next()) {
-				out.println("<br><div style='width:1000px'>");
+				int fno = rs.getInt("FNO");
+				String content = rs.getString("CONTENT");
+				content = content.replace("\n", "<br>");
+				
+				out.println("<br><div style='width:1000px;'>");
 				out.println("No. " + rs.getInt("FNO"));
 				out.println("<br>Email: " + rs.getString("EMAIL"));
-				out.println("<br><div style='width:1000px; height:400px'>");
-				out.println(rs.getString("CONTENT") + "</div>");
-				out.println("<form action='check?fno=" + rs.getInt("FNO") + " method='post'>");
+				out.println("<br>");
+				out.println(content);
+				out.println("<br><br><form action='check' method='get'>");
+				out.println("<input type='hidden' name='fno' value=" + fno + " />");
 				out.println("<input type='submit' value='수정'>");
 				out.println("</form></div>");
 			}

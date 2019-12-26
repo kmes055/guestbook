@@ -22,13 +22,17 @@ public class CheckPasswordServlet extends HttpServlet {
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException{
 		response.setContentType("text/html; charset=UTF-8");
-		
+		String fnoString = request.getParameter("fno");
+		System.out.println(fnoString);
+		int fno = Integer.parseInt(request.getParameter("fno"));
+
 		PrintWriter out = response.getWriter();
 		out.println("<html><head><title>Guest Book</title></head>");
 		out.println("<body><h1>비밀번호를 입력해주세요</h1>");
 		out.println("<form action='check' method='post'>");
-		out.println("Password: <input type='password' name='passwd' style='width: 100px;'>");
-		out.println("<input type='submit' value='확인'>");
+		out.println("<input type='hidden' name='fno' value='" + fno + "' />");
+		out.println("Password: <input type='password' name='passwd' style='width: 100px;'/>");
+		out.println("<input type='submit' value='확인'/>");
 		out.println("</form></body></html>");
 	}
 	
@@ -50,6 +54,7 @@ public class CheckPasswordServlet extends HttpServlet {
 		
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
+		System.out.format("fno: %d, passwd: %s\n", fno, passwd);
 		
 		try {
 			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
@@ -63,17 +68,19 @@ public class CheckPasswordServlet extends HttpServlet {
 			
 			rs = stmt.executeQuery(query);
 			response.setContentType("text/html; charset=UTF-8");
-			
-			if (passwd.equals(rs.getString("PWD"))) {
-				// TODO go to modify page
-				response.sendRedirect("/modify");
-			}else {
-				// TODO show denial message + back btn
-				out.println("<html><head><title>비밀번호 오류</title></head>");
-				out.println("<body><p>비밀번호가 틀렸습니다.</p>");
-				out.println("<form action='back'>");
-				out.println("<a href='/check'>뒤로가기</a>");
-				out.println("</form></body></html>");
+			if (rs.next()) {
+				if (passwd.equals(rs.getString("PWD"))) {
+					// TODO go to modify page
+
+					response.sendRedirect("modify?fno=" + fno);
+				}else {
+					// TODO show denial message + back btn
+					out.println("<html><head><title>비밀번호 오류</title></head>");
+					out.println("<body><p>비밀번호가 틀렸습니다.</p>");
+					out.println("<form action='back'>");
+					out.println("<button type='button' onclick=\"location.href='check?fno=1'\">뒤로가기</button>");
+					out.println("</form></body></html>");
+				}
 			}
 		} catch (Exception e) {
 			throw new ServletException(e);
@@ -91,8 +98,6 @@ public class CheckPasswordServlet extends HttpServlet {
 		//////////////////////////////////////////////////////////////////////
 		// 							Debugging part							//
 		//////////////////////////////////////////////////////////////////////
-		
-		out.println("done");
 	}
 		
 		

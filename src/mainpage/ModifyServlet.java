@@ -19,14 +19,18 @@ public class ModifyServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setContentType("text/html; charset=UTF-8");
 		
+		int fno = Integer.parseInt(request.getParameter("fno"));
+		
+		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();
+		
 		out.println("<html><head><title>Guest Book</title></head>");
 		out.println("<body><h1>게시물 수정</h1>");
 		out.println("<form action='modify' method='post'>");
-		out.println("<br><input type='text' name='content' style='width:1000px; height:400px;'><br>");
-		out.println("<input type='submit' value=확인");
+		out.println("<br><textarea name='content' style='width:1000px;height:400px;'></textarea><br>");
+		out.println("<input type='hidden' name='fno' value='" + fno + "' />");
+		out.println("<input type='submit' value='확인'>");
 		out.println("</form></body></html>");
 	}
 	
@@ -56,12 +60,12 @@ public class ModifyServlet extends HttpServlet {
 			
 			// TODO 
 			// 1. make another table contains modify history
-			// 2. Check this line
-			// content.replaceAll(";", "\\;");
-			String query = String.format("UPDATE FEED SET CONTENT=%s, MOD_DATE=NOW() WHERE FNO = %d;", content, fno);
+			//content = content.replaceAll(";", "\\;");
+			String query = String.format("UPDATE FEED SET CONTENT='%s', MOD_DATE=NOW() WHERE FNO=%d;", content, fno);
 			stmt.executeUpdate(query);
 			
 			response.setContentType("text/html; charset=UTF-8");
+			response.sendRedirect("main");
 		} catch (Exception e) {
 			throw new ServletException(e);
 			

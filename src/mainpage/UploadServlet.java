@@ -68,7 +68,7 @@ public class UploadServlet extends HttpServlet {
 			 * Exception("Email format is wrong"); }
 			 */
 			stmt.executeUpdate();
-			response.sendRedirect("/main");
+			response.sendRedirect("main");
 		} catch (Exception e) {
 			throw new ServletException(e);
 			
