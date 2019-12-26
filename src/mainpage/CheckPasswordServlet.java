@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,8 +23,6 @@ public class CheckPasswordServlet extends HttpServlet {
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException{
 		response.setContentType("text/html; charset=UTF-8");
-		String fnoString = request.getParameter("fno");
-		System.out.println(fnoString);
 		int fno = Integer.parseInt(request.getParameter("fno"));
 
 		PrintWriter out = response.getWriter();
@@ -54,14 +53,14 @@ public class CheckPasswordServlet extends HttpServlet {
 		
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		System.out.format("fno: %d, passwd: %s\n", fno, passwd);
 		
 		try {
-			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+			ServletContext sc = this.getServletContext();
+			Class.forName(sc.getInitParameter("driver"));
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost/studydb", //JDBC URL
-					"study",	// DBMS 사용자 아이디
-					"study");	// DBMS 사용자 암호
+					sc.getInitParameter("url"), 
+					sc.getInitParameter("username"),
+					sc.getInitParameter("password"));
 			stmt = conn.createStatement();
 			
 			String query = "SELECT PWD FROM FEED WHERE FNO=" + fno;

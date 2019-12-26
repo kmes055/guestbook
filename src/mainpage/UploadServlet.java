@@ -6,12 +6,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
+
+import spms.vo.Feed;
+
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 @WebServlet("/upload")
@@ -43,9 +48,6 @@ public class UploadServlet extends HttpServlet {
 		PreparedStatement stmt = null;
 		
 		String mail = request.getParameter("mail");
-		// TODO
-		// Search *** input tag in HTML standard
-		// make content compatible with multiple lines
 		String passwd = request.getParameter("passwd");
 		String content = request.getParameter("content");
 		
@@ -53,21 +55,33 @@ public class UploadServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		try {
-			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+			ServletContext sc = this.getServletContext();
+			Class.forName(sc.getInitParameter("driver"));
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost/studydb", //JDBC URL
-					"study",	// DBMS 사용자 아이디
-					"study");	// DBMS 사용자 암호
-			stmt = conn.prepareStatement("INSERT INTO FEED VALUES (NULL, ?, ?, NOW(), NOW(), ?);");
-			stmt.setString(1, mail);
-			stmt.setString(2, passwd);
-			stmt.setString(3, content);
+					sc.getInitParameter("url"), 
+					sc.getInitParameter("username"),
+					sc.getInitParameter("password"));
+			
+			ArrayList<Feed> Feeds = new ArrayList<Feed>();
+			Feeds.add(new Feed().
+					setEmail(mail).
+					setPwd(passwd).
+					setContent(content));
 
 			/*
-			 * if (!this.checkEmail(mail)) { // TODO show some error message throw new
-			 * Exception("Email format is wrong"); }
+			 * stmt = conn.
+			 * prepareStatement("INSERT INTO FEED VALUES (NULL, ?, ?, NOW(), NOW(), ?);");
+			 * stmt.setString(1, mail); stmt.setString(2, passwd); stmt.setString(3,
+			 * content);
 			 */
-			stmt.executeUpdate();
+
+			/*
+			  if (!this.checkEmail(mail)) { // TODO show some error message 
+			  throw new Exception("Email format is wrong"); }
+			 */
+			
+			// stmt.executeUpdate();
+			
 			response.sendRedirect("main");
 		} catch (Exception e) {
 			throw new ServletException(e);

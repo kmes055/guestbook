@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -51,11 +52,12 @@ public class ModifyServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		try {
-			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+			ServletContext sc = this.getServletContext();
+			Class.forName(sc.getInitParameter("driver"));
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost/studydb", //JDBC URL
-					"study",	// DBMS 사용자 아이디
-					"study");	// DBMS 사용자 암호
+					sc.getInitParameter("url"), 
+					sc.getInitParameter("username"),
+					sc.getInitParameter("password"));
 			stmt = conn.createStatement();
 			
 			// TODO 
