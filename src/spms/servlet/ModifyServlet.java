@@ -1,4 +1,4 @@
-package mainpage;
+package spms.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,10 +21,14 @@ public class ModifyServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		request.setAttribute("fno", request.getParameter("fno"));
-		
-		RequestDispatcher rd = request.getRequestDispatcher("feed/modify.jsp");
-		rd.forward(request, response);
+		if (request.getParameter("fno") == null) {
+			// TODO show Error
+			response.sendRedirect("main");
+		}else {
+			request.setAttribute("fno", request.getParameter("fno"));
+			RequestDispatcher rd = request.getRequestDispatcher("feed/modify.jsp");
+			rd.forward(request, response);
+		}
 	}
 	
 	@Override
@@ -37,40 +41,26 @@ public class ModifyServlet extends HttpServlet {
 		int fno = Integer.parseInt(request.getParameter("fno"));
 		String content = request.getParameter("content");
 		
-		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			Class.forName(sc.getInitParameter("driver"));
-			conn = DriverManager.getConnection(
-					sc.getInitParameter("url"), 
-					sc.getInitParameter("username"),
-					sc.getInitParameter("password"));
+			
+			conn = (Connection)sc.getAttribute("conn");
 			stmt = conn.createStatement();
 			
 			content = content.replaceAll(";", "\\;");
 			String query = String.format("UPDATE FEED SET CONTENT='%s', MOD_DATE=NOW() WHERE FNO=%d;", content, fno);
 			stmt.executeUpdate(query);
 			
-			response.setContentType("text/html; charset=UTF-8");
 			response.sendRedirect("main");
 		} catch (Exception e) {
 			throw new ServletException(e);
 			
 		} finally {
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			try {if (conn != null) conn.close();} catch(Exception e) {}
+			//try {if (conn != null) conn.close();} catch(Exception e) {}
 		}
-		//////////////////////////////////////////////////////////////////////
-		// 							Debugging part							//
-		//////////////////////////////////////////////////////////////////////
 		
-		
-		//////////////////////////////////////////////////////////////////////
-		// 							Debugging part							//
-		//////////////////////////////////////////////////////////////////////
-		
-		out.println("done");
 	}
 }

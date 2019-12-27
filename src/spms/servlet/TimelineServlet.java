@@ -1,9 +1,7 @@
-package mainpage;
+package spms.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -32,21 +30,15 @@ public class TimelineServlet extends HttpServlet {
 		Statement stmt = null;
 		ResultSet rs = null;
 		
-
-		
 		try {
 			ServletContext sc = this.getServletContext();
-			Class.forName(sc.getInitParameter("driver"));
-			conn = DriverManager.getConnection(
-					sc.getInitParameter("url"), 
-					sc.getInitParameter("username"),
-					sc.getInitParameter("password"));
+			
+			conn = (Connection)sc.getAttribute("conn");
 			stmt = conn.createStatement();
 			
 			String query = "SELECT FNO, EMAIL, CONTENT FROM FEED ORDER BY FNO DESC";
 			rs = stmt.executeQuery(query);
 			
-			response.setContentType("text/html; charset=UTF-8");
 			ArrayList<Feed> feeds = new ArrayList<Feed>();
 			
 			while (rs.next()) {
@@ -59,7 +51,6 @@ public class TimelineServlet extends HttpServlet {
 			}
 			
 			request.setAttribute("feeds",  feeds);
-			
 			RequestDispatcher rd = request.getRequestDispatcher("/feed/main.jsp");
 			rd.include(request, response);
 			
@@ -69,34 +60,8 @@ public class TimelineServlet extends HttpServlet {
 		} finally {
 			try {if (rs != null) rs.close();} catch(Exception e) {}
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			try {if (conn != null) conn.close();} catch(Exception e) {}
+			//try {if (conn != null) conn.close();} catch(Exception e) {}
 		}
-	}
-	
-	@Override
-	protected void doPost(
-			HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		response.setContentType("text/html; charset=UTF-8");
-
-		PrintWriter out = response.getWriter();
-		out.println("Something is wrong");
-		// TODO 
-		// Set page view by list of feeds
-		// or one object for each feed?
-		
-		//////////////////////////////////////////////////////////////////////
-		// 							Debugging part							//
-		//////////////////////////////////////////////////////////////////////
-		
-		//////////////////////////////////////////////////////////////////////
-		// 							Debugging part							//
-		//////////////////////////////////////////////////////////////////////
-		// TODO
-		// 1. Get current time
-		// 2. Call module including JDBC to save data into DB table.
-		// 3. (Optional) render page
 	}
 }
 

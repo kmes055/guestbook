@@ -1,9 +1,7 @@
-package mainpage;
+package spms.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
 import javax.servlet.ServletContext;
@@ -12,11 +10,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 
-import spms.vo.Feed;
-
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 @WebServlet("/upload")
@@ -34,15 +29,9 @@ public class UploadServlet extends HttpServlet {
 		String passwd = request.getParameter("passwd");
 		String content = request.getParameter("content");
 		
-		response.setContentType("text/html;charset=UTF-8");
-		
 		try {
 			ServletContext sc = this.getServletContext();
-			Class.forName(sc.getInitParameter("driver"));
-			conn = DriverManager.getConnection(
-					sc.getInitParameter("url"), 
-					sc.getInitParameter("username"),
-					sc.getInitParameter("password"));
+			conn = (Connection)sc.getAttribute("conn");
 			
 			stmt = conn.prepareStatement("INSERT INTO FEED VALUES (NULL, ?, ?, NOW(), NOW(), ?);");
 			stmt.setString(1, mail);
@@ -50,36 +39,28 @@ public class UploadServlet extends HttpServlet {
 			stmt.setString(3, content.replaceAll(";", "\\;"));
 
 			/*
-			if (!this.checkEmail(mail)) { // TODO show some error message 
-			throw new Exception("Email format is wrong"); }
+			if (!this.checkEmail(mail)) { 
+			// TODO show some error message 
+			throw new Exception("Email format is wrong"); 
+			}
 			*/
 			
-			stmt.executeUpdate();
-			
+			stmt.executeUpdate();			
 			response.sendRedirect("main");
 		} catch (Exception e) {
 			throw new ServletException(e);
 			
 		} finally {
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			try {if (conn != null) conn.close();} catch(Exception e) {}
+			//try {if (conn != null) conn.close();} catch(Exception e) {}
 		}
-		
-		//////////////////////////////////////////////////////////////////////
-		// 							Debugging part							//
-		//////////////////////////////////////////////////////////////////////
-		
-		
-		//////////////////////////////////////////////////////////////////////
-		// 							Debugging part							//
-		//////////////////////////////////////////////////////////////////////
 	}
 
 	private Boolean checkEmail(String mail) {
 		// TODO 
 		// Complete regular expression
-		// For now, (alphabet+number)@(alphabet).(2~3 lower case alphabet)
-		Pattern p = Pattern.compile("[a-zA-Z0-9]+@[a-zA-Z]+.[a-z]{2,3}");
+		// For now, (alphabet+number)@(alphabet).(2~4 lower case alphabet)
+		Pattern p = Pattern.compile("[a-zA-Z0-9]+@[a-zA-Z]+.[a-z]{2,4}");
 		return p.matcher(mail).matches();
 	}
 }
