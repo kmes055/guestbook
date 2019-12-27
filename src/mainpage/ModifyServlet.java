@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,31 +21,19 @@ public class ModifyServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		request.setAttribute("fno", request.getParameter("fno"));
 		
-		int fno = Integer.parseInt(request.getParameter("fno"));
-		
-		response.setContentType("text/html; charset=UTF-8");
-		PrintWriter out = response.getWriter();
-		
-		out.println("<html><head><title>Guest Book</title></head>");
-		out.println("<body><h1>게시물 수정</h1>");
-		out.println("<form action='modify' method='post'>");
-		out.println("<br><textarea name='content' style='width:1000px;height:400px;'></textarea><br>");
-		out.println("<input type='hidden' name='fno' value='" + fno + "' />");
-		out.println("<input type='submit' value='확인'>");
-		out.println("</form></body></html>");
+		RequestDispatcher rd = request.getRequestDispatcher("feed/modify.jsp");
+		rd.forward(request, response);
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO
-		// Get password from user
 		
 		Connection conn = null;
 		Statement stmt = null;
 		
-		// TODO get feed no. from html? other view?
 		int fno = Integer.parseInt(request.getParameter("fno"));
 		String content = request.getParameter("content");
 		
@@ -60,9 +49,7 @@ public class ModifyServlet extends HttpServlet {
 					sc.getInitParameter("password"));
 			stmt = conn.createStatement();
 			
-			// TODO 
-			// 1. make another table contains modify history
-			//content = content.replaceAll(";", "\\;");
+			content = content.replaceAll(";", "\\;");
 			String query = String.format("UPDATE FEED SET CONTENT='%s', MOD_DATE=NOW() WHERE FNO=%d;", content, fno);
 			stmt.executeUpdate(query);
 			

@@ -24,23 +24,6 @@ import java.util.regex.Pattern;
 public class UploadServlet extends HttpServlet {
 	
 	@Override
-	protected void doGet(
-			HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		response.setContentType("text/html; charset=UTF-8");
-		
-		PrintWriter out = response.getWriter();
-		out.println("<html><head><title>Guest Book</title>");
-		out.println("</head><body><h1>방명록</h1>");
-		out.println("<form action='upload' method='post'>");
-		out.println("Email: <input type='text' name='mail' style='width: 200px;'>");
-		out.println(" Password: <input type='password' name='passwd' style='width: 100px;'>");
-		out.println("<br><textarea name='content' style='width:1000px;height:400px;'></textarea><br>");
-		out.println("<input type='submit' value='확인'>");
-		out.println("</form></body></html>");
-	}
-	
-	@Override
 	protected void doPost(
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -52,7 +35,6 @@ public class UploadServlet extends HttpServlet {
 		String content = request.getParameter("content");
 		
 		response.setContentType("text/html;charset=UTF-8");
-		PrintWriter out = response.getWriter();
 		
 		try {
 			ServletContext sc = this.getServletContext();
@@ -62,25 +44,17 @@ public class UploadServlet extends HttpServlet {
 					sc.getInitParameter("username"),
 					sc.getInitParameter("password"));
 			
-			ArrayList<Feed> Feeds = new ArrayList<Feed>();
-			Feeds.add(new Feed().
-					setEmail(mail).
-					setPwd(passwd).
-					setContent(content));
+			stmt = conn.prepareStatement("INSERT INTO FEED VALUES (NULL, ?, ?, NOW(), NOW(), ?);");
+			stmt.setString(1, mail);
+			stmt.setString(2, passwd);
+			stmt.setString(3, content.replaceAll(";", "\\;"));
 
 			/*
-			 * stmt = conn.
-			 * prepareStatement("INSERT INTO FEED VALUES (NULL, ?, ?, NOW(), NOW(), ?);");
-			 * stmt.setString(1, mail); stmt.setString(2, passwd); stmt.setString(3,
-			 * content);
-			 */
-
-			/*
-			  if (!this.checkEmail(mail)) { // TODO show some error message 
-			  throw new Exception("Email format is wrong"); }
-			 */
+			if (!this.checkEmail(mail)) { // TODO show some error message 
+			throw new Exception("Email format is wrong"); }
+			*/
 			
-			// stmt.executeUpdate();
+			stmt.executeUpdate();
 			
 			response.sendRedirect("main");
 		} catch (Exception e) {
