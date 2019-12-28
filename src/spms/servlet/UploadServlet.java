@@ -10,6 +10,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.dao.FeedDao;
+import spms.vo.Feed;
+
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.regex.Pattern;
@@ -22,36 +25,26 @@ public class UploadServlet extends HttpServlet {
 	protected void doPost(
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
 		
 		String mail = request.getParameter("mail");
 		String passwd = request.getParameter("passwd");
-		String content = request.getParameter("content");
+		String content = request.getParameter("content").replaceAll(";", "\\;");
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			conn = (Connection)sc.getAttribute("conn");
 			
-			stmt = conn.prepareStatement("INSERT INTO FEED VALUES (NULL, ?, ?, NOW(), NOW(), ?);");
-			stmt.setString(1, mail);
-			stmt.setString(2, passwd);
-			stmt.setString(3, content.replaceAll(";", "\\;"));
-
-			/*
-			if (!this.checkEmail(mail)) { 
-			// TODO show some error message 
-			throw new Exception("Email format is wrong"); 
+			if (this.checkEmail(mail)) {
+				FeedDao feedDao = (FeedDao)sc.getAttribute("feedDao");
+				feedDao.upload(new Feed().setEmail(mail).setPwd(passwd).setContent(content));
 			}
-			*/
-			
-			stmt.executeUpdate();			
-			response.sendRedirect("main");
+			else {
+				throw new Exception();
+			}
+			request.setAttribute("viewUrl", "redirect:main.do");
 		} catch (Exception e) {
 			throw new ServletException(e);
 			
 		} finally {
-			try {if (stmt != null) stmt.close();} catch(Exception e) {}
 			//try {if (conn != null) conn.close();} catch(Exception e) {}
 		}
 	}

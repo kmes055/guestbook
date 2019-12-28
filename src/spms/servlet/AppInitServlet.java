@@ -9,6 +9,11 @@ import javax.servlet.http.HttpServlet;
 
 import java.sql.DriverManager;
 
+
+/* 
+ * Not used anymore.
+ */
+
 @SuppressWarnings("serial")
 public class AppInitServlet extends HttpServlet {
 

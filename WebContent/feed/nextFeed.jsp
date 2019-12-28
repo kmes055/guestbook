@@ -10,7 +10,7 @@ No. ${feed.fno}<br>
 Email: ${feed.email}<br>
 ${feed.content}<br><br>
 <form action='check' method='get'>
-<button type='button' onclick="location.href='check?fno=${feed.fno}'">수정</button>
+<button type='button' onclick="location.href='check.do?fno=${feed.fno}'">수정</button>
 </form></div>
 </c:forEach>
 </div>

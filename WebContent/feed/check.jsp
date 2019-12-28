@@ -11,7 +11,7 @@
 <jsp:include page='Header.jsp'/>
 <h1>게시글 수정</h1>
 비밀번호를 입력해주세요
-<form action='check' method='post'>
+<form action='check.do' method='post'>
 Password: <input type='password' name='passwd' style='width: 100px;'/>
 <input type='hidden' name='fno' value='${fno}' />
 <input type='submit' value='확인' />  ${wrongMessage} <br>

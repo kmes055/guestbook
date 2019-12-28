@@ -32,6 +32,10 @@ public class Feed {
 		this.fno = fno;
 		return this;
 	}
+	public Feed setFno(String fno) {
+		this.fno = Integer.parseInt(fno);
+		return this;
+	}
 	public Feed setEmail(String email) {
 		this.email = email;
 		return this;

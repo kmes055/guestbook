@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.dao.FeedDao;
+import spms.vo.Feed;
+
 @WebServlet("/check")
 @SuppressWarnings("serial")
 public class CheckPasswordServlet extends HttpServlet {
@@ -25,13 +28,12 @@ public class CheckPasswordServlet extends HttpServlet {
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException{
 		if (request.getParameter("fno") == null) {
-			// TODO show Error
-			response.sendRedirect("main");
+			// TODO show Error?
+			request.setAttribute("viewUrl", "redirect:main.do");
 		}else {
 			request.setAttribute("fno", request.getParameter("fno"));
 			request.setAttribute("wrongMessage",  "");
-			RequestDispatcher rd = request.getRequestDispatcher("feed/check.jsp");
-			rd.include(request, response);
+			request.setAttribute("viewUrl", "feed/check.jsp");
 		}
 	}
 	
@@ -40,37 +42,26 @@ public class CheckPasswordServlet extends HttpServlet {
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		
 		request.setAttribute("fno", request.getParameter("fno"));
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			conn = (Connection)sc.getAttribute("conn");
+			FeedDao feedDao = (FeedDao)sc.getAttribute("feedDao");
 			
-			stmt = conn.prepareStatement("SELECT FNO FROM FEED WHERE FNO=? AND PWD=?;");
-			stmt.setString(1, request.getParameter("fno"));
-			stmt.setString(2, request.getParameter("passwd"));
-			rs = stmt.executeQuery();
+			String fno = request.getParameter("fno");
+			String passwd = request.getParameter("passwd");
 			
-			if (rs.next()) {
-				RequestDispatcher rd = request.getRequestDispatcher("feed/modify.jsp");
-				rd.forward(request, response);
-			}else {
+			if (feedDao.check(new Feed().setFno(fno).setPwd(passwd))) {
+				request.setAttribute("viewUrl", "feed/modify.jsp");
+			} else {
 				request.setAttribute("wrongMessage", "비밀번호가 틀렸습니다.");
-				RequestDispatcher rd = request.getRequestDispatcher("feed/check.jsp");
-				rd.forward(request, response);
+				request.setAttribute("viewUrl", "feed/check.jsp");
 			}
 		
 		} catch (Exception e) {
 			throw new ServletException(e);
 			
 		} finally {
-			try {if (rs != null) rs.close();} catch(Exception e) {}
-			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			try {if (conn != null) conn.close();} catch(Exception e) {}
 		}
 	}
 }

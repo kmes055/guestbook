@@ -19,13 +19,10 @@
 		<param-name>password</param-name>
 		<param-value>study</param-value>
 	</context-param>
-	
 
-  <servlet>
-  	<servlet-name>AppInitServlet</servlet-name>
-  	<servlet-class>spms.servlet.AppInitServlet</servlet-class>
-  	<load-on-startup>1</load-on-startup>
-  </servlet>
+  <listener>
+  	<listener-class>spms.listeners.ContextLoaderListener</listener-class>
+  </listener>
   
   <welcome-file-list>
     <welcome-file>main.html</welcome-file>
