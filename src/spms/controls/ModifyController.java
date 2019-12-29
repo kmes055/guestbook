@@ -7,11 +7,11 @@ import spms.bind.DataBinding;
 import spms.dao.FeedDao;
 import spms.vo.Feed;
 
-@Component("/check.do")
-public class CheckPasswordController implements Controller, DataBinding {
+@Component("/modify.do")
+public class ModifyController implements Controller, DataBinding {
 	FeedDao feedDao;
 	
-	public CheckPasswordController setFeedDao(FeedDao feedDao) {
+	public ModifyController setFeedDao(FeedDao feedDao) {
 		this.feedDao = feedDao;
 		return this;
 	}
@@ -24,16 +24,7 @@ public class CheckPasswordController implements Controller, DataBinding {
 	@Override
 	public String execute(Map<String, Object> model) throws Exception {
 		Feed feed = (Feed)model.get("feed");
-		if (feed.getPwd() == null) {
-			model.put("wrongMessage", "");
-			return "feed/check.jsp";
-		}
-		if(feedDao.check(feed)) {
-			return "feed/modify.jsp";
-		}else {
-			model.put("wrongMessage", "비밀번호가 틀렸습니다.");
-			return "feed/check.jsp";
-		}
-	
+		feedDao.modify(feed);
+		return "redirect:main.do";
 	}
 }

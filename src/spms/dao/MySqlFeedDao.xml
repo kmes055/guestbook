@@ -7,47 +7,32 @@
   <resultMap type="feed" id="feedResultMap">
     <id column="FNO" property="fno"/>
     <result column="EMAIL"    property="email"/>
-    <result column="PWD"      property="passwd"/>
+    <result column="PWD"      property="pwd"/>
     <result column="GEN_DATE" property="gen_date" javaType="java.sql.Date"/>
     <result column="MOD_DATE" property="mod_date" javaType="java.sql.Date"/>
     <result column="CONTENT"  property="content"/>
   </resultMap>
   
-  <select id="selectList" parameterType="feed" resultMap="memberResultMap">
-    select FNO, EMAIL, CONTENT
-    from FEED
-    order by FNO DESC
+  <select id="selectNextFeed" resultMap="feedResultMap">
+    SELECT FNO, EMAIL, CONTENT
+    FROM FEED
+    ORDER BY FNO DESC
   </select>
   
-  <insert id="insert" parameterType="member">
-    insert into MEMBERS(MNAME,EMAIL,PWD,CRE_DATE,MOD_DATE)
-    values (#{name},#{email},#{password},now(),now())
+  <insert id="upload" parameterType="feed">
+    INSERT INTO FEED 
+    VALUES(NULL, #{email}, #{pwd}, NOW(), NOW(), #{content})
   </insert>
   
-  <select id="selectOne" parameterType="int" resultMap="memberResultMap">
-    select MNO, MNAME, EMAIL, CRE_DATE, MOD_DATE
-    from MEMBERS 
-    where MNO=#{value}
-  </select>
-  
-  <update id="update" parameterType="map">
-    update MEMBERS 
-    <set>
-      <if test="name != null">MNAME=#{name},</if>
-      <if test="email != null">EMAIL=#{email},</if>
-      MOD_DATE=now()
-    </set>
-    where MNO=#{no}
+  <update id="modify" parameterType="feed">
+	UPDATE FEED
+	SET CONTENT=#{content}, MOD_DATE=NOW()
+	WHERE FNO=#{fno}
   </update>
   
-  <delete id="delete" parameterType="int">
-    delete from MEMBERS 
-    where MNO=#{value}
-  </delete>
-  
-  <select id="exist" parameterType="map" resultMap="memberResultMap">
-    select MNO, MNAME, EMAIL, CRE_DATE, MOD_DATE
-    from MEMBERS 
-    where EMAIL=#{email} and PWD=#{password}
+  <select id="check" parameterType="feed" resultType="feed">
+  	SELECT FNO
+  	FROM FEED
+  	WHERE FNO=#{fno} AND PWD=#{pwd}
   </select>
 </mapper>

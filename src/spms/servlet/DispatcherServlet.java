@@ -14,9 +14,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.bind.DataBinding;
+import spms.bind.ServletRequestDataBinder;
+import spms.context.ApplicationContext;
 import spms.controls.Controller;
 import spms.controls.FeedListController;
 import spms.dao.FeedDao;
+import spms.listeners.ContextLoaderListener;
 import spms.vo.Feed;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,32 +33,24 @@ public class DispatcherServlet extends HttpServlet {
 	protected void service(
 			HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
 		String servletPath = request.getServletPath();
-		
 		try {
-			ServletContext sc = this.getServletContext();
+			ApplicationContext ctx = ContextLoaderListener.getApplicationContext();
+			
 			HashMap<String, Object> model = new HashMap<String, Object>();
-			model.put("feedDao", sc.getAttribute("feedDao"));
+			model.put("session", request.getSession());
 			
-			String pageControllerPath = null;
-			Controller pageController = null;
+			Controller pageController = (Controller)ctx.getBean(servletPath);
 			
-			if("/main.do".equals(servletPath)) {
-				pageController = new FeedListController();
-			} else if ("/upload.do".equals(servletPath)) {
-				pageControllerPath = "/upload";
-			} else if ("/modify.do".equals(servletPath)) {
-				pageControllerPath = "/modify";
-			} else if ("/check.do".equals(servletPath)) {
-				pageControllerPath = "/check";
+			if (pageController == null) {
+				throw new Exception("요청한 서비스를 찾을 수 없습니다");
 			}
-
-			RequestDispatcher rd = request.getRequestDispatcher(pageControllerPath);
-			rd.include(request, response);
-
+			
+			if (pageController instanceof DataBinding) {
+				prepareRequestData(request, model, (DataBinding)pageController);
+			}
+			
 			String viewUrl = pageController.execute(model);
-			//String viewUrl = (String)request.getAttribute("viewUrl");
 			
 			for(String key : model.keySet()) {
 				request.setAttribute(key, model.get(key));
@@ -64,17 +60,26 @@ public class DispatcherServlet extends HttpServlet {
 				response.sendRedirect(viewUrl.substring(9));
 				return;
 			} else {
-				rd = request.getRequestDispatcher(viewUrl);
+				RequestDispatcher rd = request.getRequestDispatcher(viewUrl);
 				rd.include(request, response);
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
-			//request.setAttribute("error", e);
 			throw new ServletException(e);
 			
-		} finally {
-			//try {if (conn != null) conn.close();} catch(Exception e) {}
+		}
+	}
+	
+	private void prepareRequestData(HttpServletRequest request, HashMap<String, Object> model, 
+			DataBinding dataBinding) throws Exception{
+		Object[] dataBinders = dataBinding.getDataBinders();
+		String dataName = null;
+		Class<?> dataType = null;
+		Object dataObj = null;
+		for(int i = 0; i < dataBinders.length; i += 2) {
+			dataName = (String)dataBinders[i];
+			dataType = (Class<?>)dataBinders[i + 1];
+			dataObj = ServletRequestDataBinder.bind(request, dataType, dataName);
+			model.put(dataName, dataObj);
 		}
 	}
 }
-
