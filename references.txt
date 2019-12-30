@@ -6,3 +6,10 @@ JQuery를 이용한 무한 스크롤 예제
 https://velopert.com/1890
 Infinite scrolling on data from database
 https://stackoverflow.com/questions/39453795/infinite-scrolling-on-data-from-database
+단위 테스트 사용 방법
+https://brunch.co.kr/@pubjinson/16
+부스트트랩 시작하기
+https://tworab.tistory.com/71
+
+Regex
+^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$
