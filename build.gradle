@@ -60,13 +60,23 @@ dependencies {
 	compile 'log4j:log4j:1.2.17'
 	compile 'mysql:mysql-connector-java'
 	
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
+	testCompile 'junit:junit:4.12'
+	compile 'junit:junit:4.12'
+	
+	testImplementation("junit:junit:4.12")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+	testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.5.2")
+
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform {
+	    includeTags 'fast', 'smoke & feature-a'
+	    // excludeTags 'slow', 'ci'
+	    includeEngines 'junit-jupiter'
+	    // excludeEngines 'junit-vintage'
+    }
 }
 
 uploadArchives {

@@ -24,7 +24,7 @@
     VALUES(NULL, #{email}, #{pwd}, NOW(), NOW(), #{content})
   </insert>
   
-  <update id="modify" parameterTy".travis.yml"pe="feed">
+  <update id="modify" parameterType="feed">
 	UPDATE FEED
 	SET CONTENT=#{content}, MOD_DATE=NOW()
 	WHERE FNO=#{fno}
