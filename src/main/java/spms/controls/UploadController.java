@@ -37,17 +37,19 @@ public class UploadController implements Controller, DataBinding {
 	@Override
 	public String execute(Map<String, Object> model) throws Exception {
 		Feed feed = (Feed)model.get("feed");
-		System.out.println("Before: " + errorMessage);
+		
 		if (!emailChecker.emailTest(feed.getEmail())) {
 			errorMessage = "이메일 형식이 잘못됐습니다";
 		}else if (feed.getPwd().length() < 4){
 			errorMessage = "패스워드는 4자 이상이어야 합니다";
 		}else if (feed.getContent().equals("")) {
 			errorMessage = "내용을 1자 이상 입력해주세요";
+		}else {
+			feedDao.upload(feed);
+			return "redirect:main.do";
 		}
-		System.out.println("After: " + errorMessage);
 		model.put("errorMessage", errorMessage);
-		return "redirect:main.do";
+		return "feed/uploadError.jsp";
 	}
 	
 }

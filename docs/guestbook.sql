@@ -68,7 +68,7 @@ drop trigger modify_trig;
 select * from feed;
 select * from history;
 
-insert into feed values(NULL, 'a@brave.com', '1111', NOW(), NOW(), 'Triger test at insert');
+insert into feed values(NULL, 'a@brave.com', '1111', NOW(), NOW(), 'What number is this?');
 UPDATE FEED SET CONTENT='SQL Trigger Testing', MOD_DATE=NOW() WHERE FNO=14;
 
 select fno from feed where fno=2 and pwd='1111';
