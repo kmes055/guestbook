@@ -26,7 +26,6 @@ public class FeedListController implements Controller, DataBinding {
 	@Override
 	public String execute(Map<String, Object> model) throws Exception {
 		model.put("feeds", feedDao.selectNextFeed());
-		
 		return "feed/main.jsp";
 	}
 }

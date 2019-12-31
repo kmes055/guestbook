@@ -16,7 +16,7 @@ import spms.vo.Feed;
 public class UploadController implements Controller, DataBinding {
 	FeedDao feedDao;
 	EmailChecker emailChecker;
-	String ErrorMessage;
+	String errorMessage = "";
 	
 	@PostConstruct
     public void init() {
@@ -37,17 +37,16 @@ public class UploadController implements Controller, DataBinding {
 	@Override
 	public String execute(Map<String, Object> model) throws Exception {
 		Feed feed = (Feed)model.get("feed");
-		ErrorMessage = "";
-		
+		System.out.println("Before: " + errorMessage);
 		if (!emailChecker.emailTest(feed.getEmail())) {
-			ErrorMessage = "이메일 형식이 잘못됐습니다";
+			errorMessage = "이메일 형식이 잘못됐습니다";
 		}else if (feed.getPwd().length() < 4){
-			ErrorMessage = "패스워드는 4자 이상이어야 합니다";
+			errorMessage = "패스워드는 4자 이상이어야 합니다";
 		}else if (feed.getContent().equals("")) {
-			ErrorMessage = "내용을 1자 이상 입력해주세요";
+			errorMessage = "내용을 1자 이상 입력해주세요";
 		}
-		
-		model.put("ErrorMessage", ErrorMessage);
+		System.out.println("After: " + errorMessage);
+		model.put("errorMessage", errorMessage);
 		return "redirect:main.do";
 	}
 	
