@@ -6,11 +6,5 @@ branches:
   only:
     - master
 
-# Activate Cache of Travis CI server
-cache:
-  directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.gradle'
-
 # clean and Build 
 script: "./gradlew clean build"
