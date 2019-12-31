@@ -1,4 +1,5 @@
 ﻿# NHN 사전과제
+[![Build Status](https://travis-ci.org/kmes055/guestbook.svg?branch=master)](https://travis-ci.org/kmes055/guestbook)
 
 **개발환경**
 
