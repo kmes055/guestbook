@@ -10,6 +10,8 @@ https://stackoverflow.com/questions/39453795/infinite-scrolling-on-data-from-dat
 https://brunch.co.kr/@pubjinson/16
 부스트트랩 시작하기
 https://tworab.tistory.com/71
+Git에서 CRLF 개행 문자 차이로 인한 문제 해결하기
+https://www.lesstif.com/pages/viewpage.action?pageId=20776404
 
 Regex
 ^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$
