@@ -18,6 +18,7 @@ public class ContextLoaderListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		try {
 			applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+			
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
